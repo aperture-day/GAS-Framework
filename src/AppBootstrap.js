@@ -36,6 +36,8 @@ const AppBootstrap_ = (function () {
           break;
         }
       }
+    } else if (options && options.sheetName) {
+      sheet = db.getSheetByName(options.sheetName);
     } else {
       // Default behavior: use 'table' param
       const tableName = req.parameter.table;
@@ -72,8 +74,8 @@ const AppBootstrap_ = (function () {
      * @param {string} action - The action name (req.parameter.action).
      * @param {Function} callback - The function to execute. (req, sheet, tableData) => ...
      * @param {Object} [options] - Optional settings.
-     * @param {boolean} [options.loadTableData] - If true, reads table data.
      * @param {number} [options.sheetId] - If provided, targets this sheet ID.
+     * @param {string} [options.sheetName] - If provided, targets this sheet name.
      */
     registerGetRoute: function (action, callback, options) {
       store.getRoutes[action] = { callback: callback, options: options || {} };
@@ -91,9 +93,12 @@ const AppBootstrap_ = (function () {
      * Registers a handler for a specific POST action.
      * @param {string} action - The action name (req.parameter.action).
      * @param {Function} callback - The function to execute.
+     * @param {Object} [options] - Optional settings.
+     * @param {number} [options.sheetId] - If provided, targets this sheet ID.
+     * @param {string} [options.sheetName] - If provided, targets this sheet name.
      */
-    registerPostRoute: function (action, callback) {
-      store.postRoutes[action] = callback;
+    registerPostRoute: function (action, callback, options) {
+      store.postRoutes[action] = { callback: callback, options: options || {} };
     },
 
     /**
@@ -150,7 +155,7 @@ const AppBootstrap_ = (function () {
         // But user request implies we manage it.
         // However, some handlers might not need a sheet at all.
         // Let's pass what we found.
-        return route.callback(e, context.sheet, context.tableData);
+        return route.callback(e, context.sheet);
       } else if (store.defaultGetHandler) {
         return store.defaultGetHandler(e);
       } else {
@@ -168,8 +173,17 @@ const AppBootstrap_ = (function () {
      */
     dispatchPost: function (e) {
       const action = e.parameter.action;
-      if (store.postRoutes[action]) {
-        return store.postRoutes[action](e);
+      const route = store.postRoutes[action];
+      if (route) {
+        // Resolve context (sheet, tableData)
+        const context = loadContextFromOptions(e, route.options);
+
+        // If specific sheet was requested (via ID or table param) but not found, 
+        // we might want to let the handler decide, or return error.
+        // But user request implies we manage it.
+        // However, some handlers might not need a sheet at all.
+        // Let's pass what we found.
+        return route.callback(e, context.sheet);
       } else if (store.defaultPostHandler) {
         return store.defaultPostHandler(e);
       } else {
