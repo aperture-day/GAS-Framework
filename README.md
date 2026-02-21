@@ -48,6 +48,23 @@ You can also add this framework as a Library to your GAS project:
 3.  Click **Look up** and select the latest version.
 4.  Set the identifier to `GasFramework`.
 
+Or add this in dependencies of appsscript.json:
+
+```json
+{
+  "dependencies": {
+    "libraries": [
+      {
+        "userSymbol": "GASFramework",
+        "version": "0",
+        "libraryId": "1nK3RY0oPBFjFIA2QEWQLSq1mjnf4-YTM6RPoIrUWfJb7t84PFh_f0VX6",
+        "developmentMode": true
+      }
+    ]
+  }
+}
+```
+
 ---
 
 ## Usage
@@ -57,6 +74,8 @@ You can also add this framework as a Library to your GAS project:
 In your main script file (e.g., `main.gs` or `Code.gs`), set up the entry points:
 
 ```javascript
+// Add this to your main script file.
+// If you use library, you can use GASFramework.AppBootstrap instead of AppBootstrap.
 const AppBootstrap = GASFramework.AppBootstrap;
 const Response = GASFramework.Response;
 const Sheet = GASFramework.Sheet;

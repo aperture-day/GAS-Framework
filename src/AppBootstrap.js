@@ -159,10 +159,7 @@ const AppBootstrap_ = (function () {
       } else if (store.defaultGetHandler) {
         return store.defaultGetHandler(e);
       } else {
-        return Response.json({
-          status: 'error',
-          message: 'Action not found'
-        });
+        return RouteNotFound(e);
       }
     },
 
@@ -187,10 +184,7 @@ const AppBootstrap_ = (function () {
       } else if (store.defaultPostHandler) {
         return store.defaultPostHandler(e);
       } else {
-        return Response.json({
-          status: 'error',
-          message: 'Action not found'
-        });
+        return RouteNotFound(e);
       }
     }
   };
