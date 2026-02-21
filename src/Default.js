@@ -6,11 +6,11 @@
  * Default Route Not Found handler.
  */
 function RouteNotFound(req) {
-    return Response.json({
-        status: false,
-        message: 'Action not found (and debug handler default missing)',
-        request: req,
-    });
+  return Response.json({
+    status: false,
+    message: 'Action not found',
+    request: req,
+  });
 }
 /**
  * Default GET handler.
@@ -21,4 +21,3 @@ AppBootstrap.registerDefaultGet(RouteNotFound);
  * Default POST handler.
  */
 AppBootstrap.registerDefaultPost(RouteNotFound);
-
