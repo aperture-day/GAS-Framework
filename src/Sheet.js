@@ -108,6 +108,26 @@ const Sheet_ = (function () {
           sheet.appendRow(rowData);
 
           return result;
+        },
+        statistic: function () {
+          // Calculate the range containing data (last row x last column)
+          var lastRow = sheet.getLastRow();
+          var lastCol = sheet.getLastColumn();
+          var totalDataCells = lastRow * lastCol;
+
+          // Calculate the total cells created in this sheet (including empty rows/columns at the bottom)
+          var maxRow = sheet.getMaxRows();
+          var maxCol = sheet.getMaxColumns();
+          var totalCreatedCells = maxRow * maxCol;
+
+          return {
+            rows: lastRow,
+            cols: lastCol,
+            maxRows: maxRow,
+            maxCols: maxCol,
+            totalDataCells: totalDataCells,
+            totalCreatedCells: totalCreatedCells
+          }
         }
       }
     }

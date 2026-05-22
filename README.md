@@ -76,9 +76,7 @@ In your main script file (e.g., `main.gs` or `Code.gs`), set up the entry points
 ```javascript
 // Add this to your main script file.
 // If you use library, you can use GASFramework.AppBootstrap instead of AppBootstrap.
-const AppBootstrap = GASFramework.AppBootstrap;
-const Response = GASFramework.Response;
-const Sheet = GASFramework.Sheet;
+const { AppBootstrap, Response, Sheet, Table, Statistic } = GASFramework;
 
 function onOpen() {
   AppBootstrap.runOnOpen('My Custom Menu');
@@ -161,6 +159,20 @@ function processData() {
     'Name': 'Jane Smith',
     'Status': 'Active'
   });
+
+  const stats = Statistic.sheets();
+  Logger.log(stats);
+}
+```
+
+### 6. Working with Statistic
+
+Use the `statistic` utility to get the statistics of the spreadsheet.
+
+```javascript
+function getStatistics() {
+  const stats = Statistic.sheets();
+  Logger.log(stats);
 }
 ```
 
