@@ -109,6 +109,10 @@ const Sheet_ = (function () {
 
           return result;
         },
+        /**
+         * Returns the statistics of the sheet.
+         * @returns {Object} The statistics of the sheet.
+         */
         statistic: function () {
           // Calculate the range containing data (last row x last column)
           var lastRow = sheet.getLastRow();
