@@ -214,6 +214,22 @@ function getStatistics() {
 }
 ```
 
+## Tests
+
+```bash
+node test/Sheet.test.js
+```
+
+No dependencies and no test framework — the suite is a plain Node script that
+stubs the Apps Script `Sheet` object and runs `src/Sheet.js` for real. It exits
+non-zero on failure.
+
+The upsert contract in [ADR-0001](docs/adr/0001-upsert-writes-only-present-keys.md)
+is what these tests exist to protect. Because this library is consumed in
+development mode, a push is live for every dependent immediately — there is no
+version to pin against, so this suite is the only gate between a change and
+everything using it. Run it before pushing.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
