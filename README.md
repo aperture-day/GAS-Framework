@@ -6,7 +6,7 @@ A lightweight, modular framework for Google Apps Script (GAS) designed to decoup
 
 - **Centralized Routing**: easily register GET and POST handlers with action-based dispatching.
 - **Custom Menu Management**: register menu items from anywhere in your project and build them automatically in `onOpen`.
-- **Sheet Utility**: read and manipulate Google Sheets data as objects (JSON-like) with built-in filtering and appending.
+- **Sheet Utility**: read and manipulate Google Sheets data as objects (JSON-like) with built-in filtering, appending and upserting.
 - **Unified Responses**: simple JSON response utility for Web App deployments.
 - **Lifecycle Hooks**: register multiple `onOpen` callbacks without cluttering the global `onOpen` function.
 - **Default Fallbacks**: register default handlers for unmatched routes.
@@ -164,6 +164,44 @@ function processData() {
   Logger.log(stats);
 }
 ```
+
+#### Upserting
+
+`upsert` matches existing rows on a key column, updating them in place and
+appending the rest. It returns how many rows it wrote.
+
+```javascript
+function syncUsers(users) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Data');
+  const db = Sheet.load(sheet);
+
+  const result = db.upsert(users, { key: 'Email' });
+  Logger.log(result); // { inserted: 3, updated: 12 }
+}
+```
+
+**An upsert writes only the columns present in the object you pass.** Any header
+you leave out is untouched, so a sheet can mix generated columns with columns a
+human types into:
+
+```javascript
+// 'Notes' is typed by a human. Never mentioning it is what protects it —
+// no allowlist to keep in sync, and columns added later are safe by default.
+db.upsert({ 'Email': 'jane@example.com', 'Status': 'Active' }, { key: 'Email' });
+```
+
+Clearing a cell is therefore explicit — pass the header with an empty value:
+
+```javascript
+db.upsert({ 'Email': 'jane@example.com', 'Status': '' }, { key: 'Email' });
+```
+
+Only cells whose value actually changes are written, so an upsert that finds
+nothing new performs no writes. Updates are written as contiguous column runs
+rather than whole rows, so formulas in untouched cells survive.
+
+See [ADR-0001](docs/adr/0001-upsert-writes-only-present-keys.md) for why the
+contract works this way.
 
 ### 6. Working with Statistic
 
